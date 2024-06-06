@@ -3,64 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" href="green.png" type="image/png">
   <link rel="stylesheet" href="./index.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
   <title>24-Hours on the roadside</title>
-
 </head>
 <body>
   <h1>24 Hours on the roadside</h1>
 
-        <div id="soundcloud-player"></div>     
-    
-  <script src="https://w.soundcloud.com/player/api.js"></script>
+  <div id="audio-player-container">
+    <audio id="audio-player" controls>
+      <source src="https://dl.dropboxusercontent.com/s/yourfile.mp3" type="audio/mp3">
+      Your browser does not support the audio element.
+    </audio>
+  </div>
+
   <script>
-    // SoundCloud track URL
-    const trackUrl = 'https://soundcloud.com/lola-burton-393511053/24-hours-on-the-roadside';
-    // Initialize SoundCloud Player
-    const iframe = document.createElement('iframe');
-    iframe.width = '100%';
-    iframe.height = '166';
-    iframe.scrolling = 'no';
-    iframe.frameBorder = 'no';
-    iframe.allow = 'autoplay';
-    iframe.src = `https://w.soundcloud.com/player/?url=${encodeURIComponent(trackUrl)}&auto_play=true`;
-
-    document.getElementById('soundcloud-player').appendChild(iframe);
-
-    // When the player is ready, control the playback time
-    iframe.onload = () => {
-      const widget = SC.Widget(iframe);
+    document.addEventListener('DOMContentLoaded', () => {
+      const audioPlayer = document.getElementById('audio-player');
 
       // Get current time of day in seconds
       const now = new Date();
       const currentSeconds = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
 
-      // Set player to start at the current time
-      widget.bind(SC.Widget.Events.READY, () => {
-        widget.getDuration(duration => {
+      audioPlayer.addEventListener('loadedmetadata', () => {
+        const duration = audioPlayer.duration;
+
+        if (duration > 0) {
           // Calculate the playback position as a percentage of the track duration
-          const position = (currentSeconds % duration);
-          widget.seekTo(position);
-          widget.play();
+          const position = currentSeconds % duration;
+          audioPlayer.currentTime = position;
 
-           // Add loop functionality
-           widget.bind(SC.Widget.Events.FINISH, () => {
-            widget.seekTo(0);  // Seek to the beginning
-            widget.play();     // Play the track again
+          audioPlayer.play();
+
+          // Loop functionality
+          audioPlayer.addEventListener('ended', () => {
+            audioPlayer.currentTime = 0; // Seek to the beginning
+            audioPlayer.play(); // Play the track again
           });
-        });
+        }
       });
-
-
-    };
+    });
   </script>
-
+  
   <div class="twentyfour"> <h1>24</h1></div>
-
-
 </body>
 </html>
